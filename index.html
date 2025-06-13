@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>수학 퀴즈</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f0f8ff;
+      padding: 20px;
+      text-align: center;
+    }
+    .quiz-container {
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      padding: 30px;
+      max-width: 600px;
+      margin: auto;
+    }
+    .question {
+      font-size: 1.5em;
+      margin-bottom: 20px;
+    }
+    .choices {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    button.choice {
+      padding: 10px;
+      font-size: 1.1em;
+      border: 2px solid #0077cc;
+      border-radius: 5px;
+      background: #e6f2ff;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button.choice:hover {
+      background: #cce6ff;
+    }
+    .score {
+      font-size: 1.3em;
+      margin-top: 20px;
+    }
+    #restart-btn {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 1em;
+      border: none;
+      border-radius: 5px;
+      background-color: #0077cc;
+      color: white;
+      cursor: pointer;
+    }
+    #restart-btn:hover {
+      background-color: #005fa3;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="quiz-container">
+    <div id="quiz">
+      <div class="question" id="question">문제 로딩 중...</div>
+      <div class="choices" id="choices"></div>
+      <div class="score" id="score"></div>
+      <button id="restart-btn" style="display:none;">다시 시작하기</button>
+    </div>
+  </div>
+
+  <script>
+    const quizData = [
+      {
+        question: "1 + 1 = ?",
+        choices: ["3", "40", "2"],
+        correct: "2"
+      },
+      {
+        question: "2 × 2 = ?",
+        choices: ["4", "5", "6"],
+        correct: "4"
+      },
+      {
+        question: "5 - 2 = ?",
+        choices: ["3", "6", "7"],
+        correct: "3"
+      },
+      {
+        question: "6 + 2 = ?",
+        choices: ["8", "9", "10"],
+        correct: "8"
+      },
+      {
+        question: "1 + 2 + 3 = ?",
+        choices: ["9", "1", "6"],
+        correct: "6"
+      }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+
+    const questionEl = document.getElementById('question');
+    const choicesEl = document.getElementById('choices');
+    const scoreEl = document.getElementById('score');
+    const restartBtn = document.getElementById('restart-btn');
+
+    function shuffleArray(array) {
+      return array.sort(() => Math.random() - 0.5);
+    }
+
+    function showQuestion() {
+      const quiz = quizData[currentQuestion];
+      questionEl.textContent = `${currentQuestion + 1}. ${quiz.question}`;
+      choicesEl.innerHTML = '';
+      const shuffledChoices = shuffleArray([...quiz.choices]);
+
+      shuffledChoices.forEach(choice => {
+        const button = document.createElement('button');
+        button.textContent = choice;
+        button.classList.add('choice');
+        button.addEventListener('click', () => selectAnswer(choice));
+        choicesEl.appendChild(button);
+      });
+    }
+
+    function selectAnswer(choice) {
+      const quiz = quizData[currentQuestion];
+      if (choice === quiz.correct) {
+        score++;
+      }
+      currentQuestion++;
+      if (currentQuestion < quizData.length) {
+        showQuestion();
+      } else {
+        showResult();
+      }
+    }
+
+    function showResult() {
+      questionEl.textContent = '퀴즈 완료!';
+      choicesEl.innerHTML = '';
+      scoreEl.textContent = `당신의 점수: ${score} / ${quizData.length}`;
+      restartBtn.style.display = 'inline-block';
+    }
+
+    restartBtn.addEventListener('click', () => {
+      currentQuestion = 0;
+      score = 0;
+      scoreEl.textContent = '';
+      restartBtn.style.display = 'none';
+      showQuestion();
+    });
+
+    // 첫 문제 보여주기
+    showQuestion();
+  </script>
+
+</body>
+</html>
